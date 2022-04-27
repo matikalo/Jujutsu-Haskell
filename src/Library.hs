@@ -5,7 +5,7 @@ doble :: Number -> Number
 doble numero = numero + numero
 
 
-data Hechicero = Hechicero {antiguedad :: Int, clan :: String, grado :: Int} deriving(Show, Eq)
+data Hechicero = Hechicero {antiguedad :: Number, clan :: String, grado :: Number} deriving(Show, Eq)
 
 type Equipos = [Hechicero]
 
@@ -18,12 +18,48 @@ maki = Hechicero {antiguedad = 3, clan = "Zenin", grado = 4}
 yuji = Hechicero {antiguedad = 0, clan = "Itadori", grado = 1}
 
 estaPreparado :: Equipos -> Bool
-estaPreparado unequipo = length unequipo > 3
+estaPreparado unequipo = tamanioEquipo unequipo > 3
+
+tamanioEquipo :: Equipos -> Number
+tamanioEquipo = length
+
 tieneExperiencia :: Hechicero -> Bool
 tieneExperiencia unhechicero = ((>1).antiguedad) unhechicero
-bajarGrado :: Hechicero -> Int
-bajarGrado unhechicero = max 0 (grado unhechicero-1)
+
+--bajarGrado :: Hechicero -> Number
+--bajarGrado unhechicero = max 0 (grado unhechicero-1)
 subirRango :: Hechicero -> Hechicero
-subirRango unhechicero = unhechicero {antiguedad = antiguedad unhechicero, clan = clan unhechicero, grado = bajarGrado unhechicero }
+subirRango unHechicero 
+        | gradoEspecial unHechicero = unHechicero
+        | otherwise = unHechicero { grado = (grado unHechicero) - 1}
+--{antiguedad = antiguedad unhechicero, clan = clan unhechicero, grado = bajarGrado unhechicero }
+
+gradoEspecial :: Hechicero -> Bool
+gradoEspecial unHechicero = ((== 0).grado) unHechicero
+
 esPrestigioso :: Hechicero -> Bool
-esPrestigioso unhechicero = clan unhechicero == "Zenin" || clan unhechicero == "Gojo" || clan unhechicero == "Kamo"
+esPrestigioso unhechicero = elem (clan unhechicero) ["Zenin","Gojo","Kamo"]
+
+esInvencible :: Equipos -> Bool
+esInvencible equipo = any gradoEspecial equipo
+
+esFavorito :: Equipos -> Bool
+esFavorito equipo = all esPrestigioso equipo
+
+sonExpertos :: Equipos -> Equipos
+sonExpertos equipo = filter tieneExperiencia equipo
+
+haceFrenteACualquierMaldicion :: Equipos -> Bool
+haceFrenteACualquierMaldicion equipo = esInvencible equipo || estaPreparado equipo
+
+powerUp :: Equipos -> Equipos
+powerUp = map subirRango
+
+
+--es especial cuando es de grado especial
+cantidadHechicerosEspeciales :: Equipos -> Number
+cantidadHechicerosEspeciales = length.filter gradoEspecial
+
+
+promedioGrados :: Equipos -> Number
+promedioGrados equipo = div (sum.map grado $ equipo) (tamanioEquipo equipo) 
