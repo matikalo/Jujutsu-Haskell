@@ -56,7 +56,7 @@ powerUp :: Equipos -> Equipos
 powerUp = map subirRango
 
 
---es especial cuando es de grado especial
+
 cantidadHechicerosEspeciales :: Equipos -> Number
 cantidadHechicerosEspeciales = length.filter gradoEspecial
 
